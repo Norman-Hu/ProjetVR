@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.008880187, g: 0.007176919, b: 0.004510982, a: 1}
+  m_IndirectSpecularColor: {r: 0.008879246, g: 0.0071747, b: 0.0045121135, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -132,7 +132,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 305345651}
-  - component: {fileID: 305345650}
+  - component: {fileID: 305345652}
   m_Layer: 0
   m_Name: Asteroids
   m_TagString: Untagged
@@ -140,23 +140,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &305345650
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 305345649}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d7c88541e5d755bf58055be3b4db9164, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  asteroidPrefabs:
-  - {fileID: 151664, guid: fa49e460baf435b4780da7196c2ab473, type: 3}
-  - {fileID: 141316, guid: 84cc3cd234dfc9d4d9d2e92c0eb0af75, type: 3}
-  - {fileID: 130102, guid: 04d0bf4be9447154188d86f6e3b8dce9, type: 3}
-  asteroidCount: 50
 --- !u!4 &305345651
 Transform:
   m_ObjectHideFlags: 0
@@ -173,6 +156,23 @@ Transform:
   - {fileID: 2064578202}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &305345652
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 305345649}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: df5bdda205a8a9140891e6dd72e51642, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  asteroidPrefabs:
+  - {fileID: 151664, guid: 4f0465fddc0cc2d4c9c1ccfa3e17d607, type: 3}
+  - {fileID: 141316, guid: 2efae0db74177a44f987b56054b5f731, type: 3}
+  - {fileID: 130102, guid: 161832cceb2d77f408ca07da05b52c92, type: 3}
+  asteroidCount: 50
 --- !u!1001 &1161467297
 PrefabInstance:
   m_ObjectHideFlags: 0
