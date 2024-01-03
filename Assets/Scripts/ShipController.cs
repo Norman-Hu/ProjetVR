@@ -31,34 +31,54 @@ public class ShipController : MonoBehaviour
 
     [SerializeField]
     private float flightAssistThrottleForce = 50.0f;
+
+    [SerializeField]
+    private Transform joystick;
     
     private Rigidbody _rb;
 
     private bool _isUsingLinearPropulsion = false;
     private bool _isUsingAngularPropulsion = false;
-    
+
+    private ConfigurableJoint _joint;
+
+    private Vector3 _restingPos;
     
     private void Start()
     {
         _rb = GetComponent<Rigidbody>();
+        _joint = joystick.GetComponent<ConfigurableJoint>();
+        _restingPos = joystick.transform.up;
     }
 
     private void Update()
     {
-        HandleInput();
+        Vector3 eulerAngles = Quaternion.FromToRotation(_restingPos, joystick.transform.up).eulerAngles;
+        float x = eulerAngles.x;
+        float z = eulerAngles.z;
+        x = x > 180.0f ? x - 360.0f : x;
+        z = z > 180.0f ? z - 360.0f : z;
+        x = Math.Clamp(x, -40.0f, 40.0f);
+        z = Math.Clamp(z, -40.0f, 40.0f);
+        z = -z/40.0f;
+        x = x/40.0f;
+        x = Math.Abs(x) < 5.0f ? 0.0f : x;
+        z = Math.Abs(z) < 5.0f ? 0.0f : z;
+        HandleInput(x, z);
         if (flightAssistance)
             HandleFlightAssist();
     }
 
-    private void HandleInput()
+    private void HandleInput(float vertical, float horizontal)
     {
         // Adds angular and linear accelerations according to the inputs.
         // The checks make sure that the ship cannot accelerate if it is already over the speed limit.
         
         // Rotation handling
         _isUsingAngularPropulsion = false;
-        var yawInput = Input.GetAxis("Yaw");
-        var pitchInput = Input.GetAxis("Pitch");
+        var yawInput = horizontal;
+        var pitchInput = vertical;
+        print("" + yawInput + " " + pitchInput);
         var pitchAcceleration = -pitchInput * rotationForce * Time.deltaTime;
         var yawAcceleration = yawInput * rotationForce * Time.deltaTime;
         
@@ -77,17 +97,17 @@ public class ShipController : MonoBehaviour
         }
 
         // Translation handling
-        _isUsingLinearPropulsion = false;
-        var throttleInput = Input.GetAxis("Throttle");
-        var throttleAcceleration = throttleInput * throttleForce * Time.deltaTime;
-        
-        var localVelocity = Quaternion.Inverse(transform.rotation) * _rb.velocity;
-        if ((throttleAcceleration > 0.0f && localVelocity.z < maxForwardVelocity)
-            || (throttleAcceleration < 0.0f && localVelocity.z > -maxForwardVelocity))
-        {
-            _rb.AddForce(transform.forward * throttleAcceleration, ForceMode.Acceleration);
-            _isUsingLinearPropulsion = true;
-        }
+        // _isUsingLinearPropulsion = false;
+        // var throttleInput = Input.GetAxis("Throttle");
+        // var throttleAcceleration = throttleInput * throttleForce * Time.deltaTime;
+        //
+        // var localVelocity = Quaternion.Inverse(transform.rotation) * _rb.velocity;
+        // if ((throttleAcceleration > 0.0f && localVelocity.z < maxForwardVelocity)
+        //     || (throttleAcceleration < 0.0f && localVelocity.z > -maxForwardVelocity))
+        // {
+        //     _rb.AddForce(transform.forward * throttleAcceleration, ForceMode.Acceleration);
+        //     _isUsingLinearPropulsion = true;
+        // }
     }
 
     private void HandleFlightAssist()
