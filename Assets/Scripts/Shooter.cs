@@ -4,48 +4,34 @@ using UnityEngine;
 
 public class Shooter : MonoBehaviour
 {
-    public Camera playerCamera;
-    public Transform laserOrigin;
-    public Transform firePoint;
-    public float gunRange = 50f;
-    public float fireRate = 0.2f;
-    public float laserDuration = 0.05f;
+    public float shootRate;
+    private float shootRateTimeStamp;
 
-    LineRenderer laserLine;
-    float fireTimer;
+    public GameObject laserShotPrefab;
 
-    void Awake()
-    {
-        laserLine = GetComponent<LineRenderer>();
-    }
+    RaycastHit rc_hit;
+    float range = 1000.0f;
 
     void Update()
     {
-        fireTimer += Time.deltaTime;
-        if (Input.GetButtonDown("Fire1") && fireTimer > fireRate)
+        if (Input.GetButtonDown("Fire1"))
         {
-            Debug.Log("Oui");
-            fireTimer = 0f;
-            laserLine.SetPosition(0, laserOrigin.position);
-            Vector3 rayOrigin = firePoint.position;
-            RaycastHit hit;
-            if (Physics.Raycast(rayOrigin, firePoint.transform.forward, out hit, gunRange))
+            if (Time.time > shootRateTimeStamp)
             {
-                laserLine.SetPosition(1, hit.point);
-                //Destroy(hit.transform.gameObject);
+                shootRay();
+                shootRateTimeStamp = Time.time + shootRate;
             }
-            else
-            {
-                laserLine.SetPosition(1, rayOrigin + (playerCamera.transform.forward * gunRange));
-            }
-            StartCoroutine(ShootLaser());
         }
     }
 
-    IEnumerator ShootLaser()
+    void shootRay()
     {
-        laserLine.enabled = true;
-        yield return new WaitForSeconds(laserDuration);
-        laserLine.enabled = false;
+        Ray ray = Camera.main.ScreenPointToRay(new Vector3(Screen.width / 2f, Screen.height / 2f, 0f));
+        if (Physics.Raycast(ray, out rc_hit, range))
+        {
+            GameObject laser = GameObject.Instantiate(laserShotPrefab, transform.position, transform.rotation) as GameObject;
+            laser.GetComponent<ShotBehavior>().setTarget(rc_hit.point);
+            GameObject.Destroy(laser, 2f);
+        }
     }
 }
