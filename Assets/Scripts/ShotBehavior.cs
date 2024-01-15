@@ -4,15 +4,22 @@ using UnityEngine;
 
 public class ShotBehavior : MonoBehaviour
 {
+    public bool is_target_set = false;
     public Vector3 target;
+    private GameObject targettedObject;
     public GameObject collisionExplosion;
-    public float speed;
+    public float speed = 0.5f;
+
+    void Start()
+    {
+        StartCoroutine(DestroyAfterDelayCoroutine());
+    }
 
     void Update()
     {
         float step = speed * Time.deltaTime;
 
-        if (target != null)
+        if (is_target_set)
         {
             if (transform.position == target)
             {
@@ -21,11 +28,17 @@ public class ShotBehavior : MonoBehaviour
             }
             transform.position = Vector3.MoveTowards(transform.position, target, step);
         }
+        else
+        {
+            transform.position += transform.forward * step * 0.05f;
+        }
     }
 
-    public void setTarget(Vector3 _target)
+    public void setTarget(Vector3 _target, GameObject _targettedObject)
     {
         target = _target;
+        targettedObject = _targettedObject;
+        is_target_set = true;
     }
 
     void explode()
@@ -34,7 +47,14 @@ public class ShotBehavior : MonoBehaviour
         {
             GameObject explosion = (GameObject)Instantiate(collisionExplosion, transform.position, transform.rotation);
             Destroy(gameObject);
+            Destroy(targettedObject);
             Destroy(explosion, 1f);
         }
+    }
+
+    IEnumerator DestroyAfterDelayCoroutine()
+    {
+        yield return new WaitForSeconds(2f);
+        Destroy(gameObject);
     }
 }
