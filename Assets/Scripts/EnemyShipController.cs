@@ -14,6 +14,9 @@ public class EnemyShipController : MonoBehaviour
     [SerializeField]
     private float changeDirectionCooldown = 3.0f;
 
+    [SerializeField]
+    private GameObject targetObject; // Nouvelle variable pour le GameObject cible
+
     private bool isReversing = false;
     private float reverseTimer = 0.0f;
 
@@ -21,6 +24,14 @@ public class EnemyShipController : MonoBehaviour
     private float changeDirectionTimer = 0.0f;
     private Quaternion startRotation;
     private Quaternion targetRotation;
+
+    public float shootRate;
+    private float shootRateTimeStamp;
+
+    public GameObject laserShotPrefab;
+
+    RaycastHit rc_hit;
+    float range = 1000.0f;
 
     private void Update()
     {
@@ -43,10 +54,23 @@ public class EnemyShipController : MonoBehaviour
 
             if (!isChangingDirection && Random.Range(0, 100) < 1)
             {
-                isChangingDirection = true;
-                changeDirectionTimer = 0.0f;
-                startRotation = transform.rotation;
-                targetRotation = Quaternion.Euler(Random.Range(-90, 90), Random.Range(0, 360), Random.Range(-90, 90));
+                if (Vector3.Distance(transform.position, targetObject.transform.position) < 50.0f)
+                {
+                    isChangingDirection = true;
+                    changeDirectionTimer = 0.0f;
+                    startRotation = transform.rotation;
+
+                    Vector3 targetDirection = targetObject.transform.position - transform.position;
+                    targetRotation = Quaternion.LookRotation(targetDirection.normalized);
+                    Fire();
+                }
+                else
+                {
+                    isChangingDirection = true;
+                    changeDirectionTimer = 0.0f;
+                    startRotation = transform.rotation;
+                    targetRotation = Quaternion.Euler(Random.Range(-90, 90), Random.Range(0, 360), Random.Range(-90, 90));
+                }
             }
 
             if (isChangingDirection)
@@ -82,5 +106,27 @@ public class EnemyShipController : MonoBehaviour
         }
 
         return false;
+    }
+
+    public void Fire()
+    {
+        if (Time.time > shootRateTimeStamp)
+        {
+            shootRay();
+            shootRateTimeStamp = Time.time + shootRate;
+        }
+    }
+
+    void shootRay()
+    {
+        Ray ray = new Ray(transform.position, transform.forward);
+        GameObject laser = Instantiate(laserShotPrefab, transform.position + 10.0f * transform.forward + new Vector3(0f, -1.5f, 0f), transform.rotation);
+        if (Physics.Raycast(ray, out rc_hit, range))
+        {
+            if (rc_hit.collider.CompareTag("Asteroid"))
+            {
+                laser.GetComponent<ShotBehavior>().setTarget(rc_hit.point, rc_hit.collider.gameObject);
+            }
+        }
     }
 }

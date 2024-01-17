@@ -27,9 +27,9 @@ public class Shooter : MonoBehaviour
         GameObject laser = Instantiate(laserShotPrefab, transform.position + new Vector3(0.0173119f, 0f, 0.153145f), transform.rotation);
         if (Physics.Raycast(ray, out rc_hit, range))
         {
-            if (rc_hit.collider.CompareTag("Asteroid"))
+            if (rc_hit.collider.CompareTag("Asteroid") || rc_hit.collider.CompareTag("Enemy"))
             {
-                laser.GetComponent<ShotBehavior>().setTarget(rc_hit.point, rc_hit.collider.gameObject);
+                //laser.GetComponent<ShotBehavior>().setTarget(rc_hit.point, rc_hit.collider.gameObject);
             }
         }
     }

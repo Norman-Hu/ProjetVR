@@ -7,6 +7,7 @@ public class ShotBehavior : MonoBehaviour
     public bool is_target_set = false;
     public Vector3 target;
     private GameObject targettedObject;
+    public AudioSource explosion_sound;
     public GameObject collisionExplosion;
     public float speed = 0.5f;
 
@@ -39,6 +40,19 @@ public class ShotBehavior : MonoBehaviour
         target = _target;
         targettedObject = _targettedObject;
         is_target_set = true;
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.gameObject.CompareTag("Asteroid") || other.gameObject.CompareTag("Enemy"))
+        {
+            Debug.Log("Test");
+            explode();
+            explosion_sound.Play();
+            Destroy(gameObject);
+            Destroy(other.gameObject);
+            return;
+        }
     }
 
     void explode()
