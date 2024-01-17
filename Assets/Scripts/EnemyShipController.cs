@@ -54,17 +54,17 @@ public class EnemyShipController : MonoBehaviour
 
             if (!isChangingDirection && Random.Range(0, 100) < 1)
             {
-                if (Vector3.Distance(transform.position, targetObject.transform.position) < 50.0f)
-                {
-                    isChangingDirection = true;
-                    changeDirectionTimer = 0.0f;
-                    startRotation = transform.rotation;
+                // if (Vector3.Distance(transform.position, targetObject.transform.position) < 50.0f)
+                // {
+                    // isChangingDirection = true;
+                    // changeDirectionTimer = 0.0f;
+                    // startRotation = transform.rotation;
 
-                    Vector3 targetDirection = targetObject.transform.position - transform.position;
-                    targetRotation = Quaternion.LookRotation(targetDirection.normalized);
-                    Fire();
-                }
-                else
+                    // Vector3 targetDirection = targetObject.transform.position - transform.position;
+                    // targetRotation = Quaternion.LookRotation(targetDirection.normalized);
+                    // Fire();
+                // }
+                // else
                 {
                     isChangingDirection = true;
                     changeDirectionTimer = 0.0f;

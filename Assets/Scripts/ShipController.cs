@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 [RequireComponent(typeof(Rigidbody))]
 public class ShipController : MonoBehaviour
@@ -34,6 +35,8 @@ public class ShipController : MonoBehaviour
 
     [SerializeField]
     private Transform joystick;
+    [SerializeField]
+    private Transform joystickBase;
     
     private Rigidbody _rb;
 
@@ -41,19 +44,17 @@ public class ShipController : MonoBehaviour
     private bool _isUsingAngularPropulsion = false;
 
     private ConfigurableJoint _joint;
-
-    private Vector3 _restingPos;
     
     private void Start()
     {
         _rb = GetComponent<Rigidbody>();
         _joint = joystick.GetComponent<ConfigurableJoint>();
-        _restingPos = joystick.transform.up;
     }
 
     private void Update()
     {
-        Vector3 eulerAngles = Quaternion.FromToRotation(_restingPos, joystick.transform.up).eulerAngles;
+        Vector3 joystickUp = joystickBase.InverseTransformDirection(joystick.transform.up);
+        Vector3 eulerAngles = Quaternion.FromToRotation(Vector3.up, joystickUp).eulerAngles;
         float x = eulerAngles.x;
         float z = eulerAngles.z;
         x = x > 180.0f ? x - 360.0f : x;
@@ -62,8 +63,8 @@ public class ShipController : MonoBehaviour
         z = Math.Clamp(z, -40.0f, 40.0f);
         z = -z/40.0f;
         x = x/40.0f;
-        x = Math.Abs(x) < 5.0f ? 0.0f : x;
-        z = Math.Abs(z) < 5.0f ? 0.0f : z;
+        x = Math.Abs(x) < .5f ? 0.0f : x;
+        z = Math.Abs(z) < .5f ? 0.0f : z;
         HandleInput(x, z);
         if (flightAssistance)
             HandleFlightAssist();
@@ -78,7 +79,7 @@ public class ShipController : MonoBehaviour
         _isUsingAngularPropulsion = false;
         var yawInput = horizontal;
         var pitchInput = vertical;
-        print("" + yawInput + " " + pitchInput);
+        // print("" + yawInput + " " + pitchInput);
         var pitchAcceleration = -pitchInput * rotationForce * Time.deltaTime;
         var yawAcceleration = yawInput * rotationForce * Time.deltaTime;
         
@@ -86,13 +87,13 @@ public class ShipController : MonoBehaviour
         if ((pitchAcceleration > 0.0f && localAngularVelocity.x < maxAngularVelocity.x)
             || (pitchAcceleration < 0.0f && localAngularVelocity.x > -maxAngularVelocity.x))
         {
-            _rb.AddRelativeTorque(Vector3.right * pitchAcceleration, ForceMode.Acceleration);
+            _rb.AddRelativeTorque(Vector3.right * pitchAcceleration, ForceMode.Force);
             _isUsingAngularPropulsion = true;
         }
         if ((yawAcceleration > 0.0f && localAngularVelocity.y < maxAngularVelocity.y)
             || (yawAcceleration < 0.0f && localAngularVelocity.y > -maxAngularVelocity.y))
         {
-            _rb.AddRelativeTorque(Vector3.up * yawAcceleration, ForceMode.Acceleration);
+            _rb.AddRelativeTorque(Vector3.up * yawAcceleration, ForceMode.Force);
             _isUsingAngularPropulsion = true;
         }
 
