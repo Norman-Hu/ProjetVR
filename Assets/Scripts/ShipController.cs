@@ -38,6 +38,11 @@ public class ShipController : MonoBehaviour
     [SerializeField]
     private Transform joystickBase;
     
+    [SerializeField]
+    private Transform throttle;
+    [SerializeField]
+    private Transform throttleBase;
+    
     private Rigidbody _rb;
 
     private bool _isUsingLinearPropulsion = false;
@@ -62,15 +67,24 @@ public class ShipController : MonoBehaviour
         x = Math.Clamp(x, -40.0f, 40.0f);
         z = Math.Clamp(z, -40.0f, 40.0f);
         z = -z/40.0f;
-        x = x/40.0f;
+        x = -x/40.0f;
         x = Math.Abs(x) < .5f ? 0.0f : x;
         z = Math.Abs(z) < .5f ? 0.0f : z;
-        HandleInput(x, z);
+        
+        Vector3 throttleUp = throttleBase.InverseTransformDirection(throttle.transform.up);
+        eulerAngles = Quaternion.FromToRotation(Vector3.up, throttleUp).eulerAngles;
+        float angle = eulerAngles.x;
+        angle = angle > 180.0f ? angle - 360.0f : angle;
+        angle = Math.Clamp(angle, -40.0f, 40.0f);
+        angle = angle/40.0f;
+        angle = Math.Abs(angle) < .5f ? 0.0f : angle;
+        
+        HandleInput(x, z, angle);
         if (flightAssistance)
             HandleFlightAssist();
     }
 
-    private void HandleInput(float vertical, float horizontal)
+    private void HandleInput(float vertical, float horizontal, float throttle)
     {
         // Adds angular and linear accelerations according to the inputs.
         // The checks make sure that the ship cannot accelerate if it is already over the speed limit.
@@ -98,17 +112,17 @@ public class ShipController : MonoBehaviour
         }
 
         // Translation handling
-        // _isUsingLinearPropulsion = false;
-        // var throttleInput = Input.GetAxis("Throttle");
-        // var throttleAcceleration = throttleInput * throttleForce * Time.deltaTime;
-        //
-        // var localVelocity = Quaternion.Inverse(transform.rotation) * _rb.velocity;
-        // if ((throttleAcceleration > 0.0f && localVelocity.z < maxForwardVelocity)
-        //     || (throttleAcceleration < 0.0f && localVelocity.z > -maxForwardVelocity))
-        // {
-        //     _rb.AddForce(transform.forward * throttleAcceleration, ForceMode.Acceleration);
-        //     _isUsingLinearPropulsion = true;
-        // }
+        _isUsingLinearPropulsion = false;
+        var throttleInput = throttle;
+        var throttleAcceleration = throttleInput * throttleForce * Time.deltaTime;
+        
+        var localVelocity = Quaternion.Inverse(transform.rotation) * _rb.velocity;
+        if ((throttleAcceleration > 0.0f && localVelocity.z < maxForwardVelocity)
+            || (throttleAcceleration < 0.0f && localVelocity.z > -maxForwardVelocity))
+        {
+            _rb.AddForce(transform.forward * throttleAcceleration, ForceMode.Force);
+            _isUsingLinearPropulsion = true;
+        }
     }
 
     private void HandleFlightAssist()
