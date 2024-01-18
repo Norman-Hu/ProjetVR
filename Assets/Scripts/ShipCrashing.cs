@@ -14,7 +14,6 @@ public class ShipCrashing : MonoBehaviour
             GameObject explosion = (GameObject)Instantiate(collisionExplosion, transform.position, transform.rotation);
             explosion_sound.Play();
             Destroy(gameObject);
-            Destroy(other.gameObject);
             Destroy(explosion, 1f);
         }
     }
