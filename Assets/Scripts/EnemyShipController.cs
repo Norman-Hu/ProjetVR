@@ -33,7 +33,12 @@ public class EnemyShipController : MonoBehaviour
     RaycastHit rc_hit;
     float range = 1000.0f;
 
-    private void Update()
+    public void Start()
+    {
+        targetObject = GameObject.Find("Starship");
+    }
+
+    public void Update()
     {
         if (isReversing)
         {
@@ -54,17 +59,17 @@ public class EnemyShipController : MonoBehaviour
 
             if (!isChangingDirection && Random.Range(0, 100) < 1)
             {
-                // if (Vector3.Distance(transform.position, targetObject.transform.position) < 50.0f)
-                // {
-                    // isChangingDirection = true;
-                    // changeDirectionTimer = 0.0f;
-                    // startRotation = transform.rotation;
+                if (Vector3.Distance(transform.position, targetObject.transform.position) < 50.0f)
+                {
+                    isChangingDirection = true;
+                    changeDirectionTimer = 0.0f;
+                    startRotation = transform.rotation;
 
-                    // Vector3 targetDirection = targetObject.transform.position - transform.position;
-                    // targetRotation = Quaternion.LookRotation(targetDirection.normalized);
-                    // Fire();
-                // }
-                // else
+                    Vector3 targetDirection = targetObject.transform.position - transform.position;
+                    targetRotation = Quaternion.LookRotation(targetDirection.normalized);
+                    Fire();
+                }
+                else
                 {
                     isChangingDirection = true;
                     changeDirectionTimer = 0.0f;

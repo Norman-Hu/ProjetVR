@@ -46,8 +46,8 @@ public class ShotBehavior : MonoBehaviour
     {
         if (other.gameObject.CompareTag("Asteroid") || other.gameObject.CompareTag("Enemy"))
         {
-            explode();
             explosion_sound.Play();
+            explode();
             Destroy(gameObject);
             Destroy(other.gameObject);
             return;
@@ -60,7 +60,7 @@ public class ShotBehavior : MonoBehaviour
         {
             GameObject explosion = (GameObject)Instantiate(collisionExplosion, transform.position, transform.rotation);
             Destroy(gameObject);
-            Destroy(targettedObject);
+            // Destroy(targettedObject);
             Destroy(explosion, 1f);
         }
     }
