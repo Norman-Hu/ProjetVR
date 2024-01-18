@@ -3547,8 +3547,8 @@ MonoBehaviour:
   maxAngularVelocity: {x: 1, y: 1}
   maxForwardVelocity: 10
   flightAssistance: 1
-  flightAssistRotationForce: 50
-  flightAssistThrottleForce: 50
+  flightAssistRotationForce: 50000
+  flightAssistThrottleForce: 50000
   joystick: {fileID: 3696276112959427080}
   joystickBase: {fileID: 3696274146049895600}
   throttle: {fileID: 3695773804001701890}

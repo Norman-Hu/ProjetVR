@@ -140,7 +140,7 @@ public class ShipController : MonoBehaviour
             Vector3 drag = flightAssistRotationForce * Time.deltaTime * (-angularVel);
             if (magnitude < .25f)
                 drag *= lowSpeedMultiplier;
-            _rb.AddTorque(drag, ForceMode.Acceleration);
+            _rb.AddTorque(drag, ForceMode.Force);
         }
     }
 }
