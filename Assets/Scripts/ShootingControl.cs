@@ -7,6 +7,8 @@ public class ShootingControl : MonoBehaviour
     public GameObject blaster1;
     public GameObject blaster2;
 
+    public AudioSource shot_sound;
+   
     private Shooter shooter1;
     private Shooter shooter2;
 
@@ -20,5 +22,6 @@ public class ShootingControl : MonoBehaviour
     {
         shooter1.Fire();
         shooter2.Fire();
+        shot_sound.Play();
     }
 }
